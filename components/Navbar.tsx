@@ -1,28 +1,38 @@
+'use client'
+
 import Link from "next/link";
 import Image from "next/image";
 
 import CustomButton from "./CustomButton";
+import { UserButton, useUser } from "@clerk/nextjs";
 
-const NavBar = () => (
-  <header className='w-full  absolute z-10'>
-    <nav className='max-w-[1440px] mx-auto flex justify-between items-center sm:px-16 px-6 py-4 bg-transparent'>
-      <Link href='/' className='flex justify-center items-center'>
-        <Image
-          src='/logo.svg'
-          alt='logo'
-          width={118}
-          height={18}
-          className='object-contain'
-        />
-      </Link>
+const NavBar = () => {
+  const { isSignedIn } = useUser(); // Moved inside the function body
 
-      <CustomButton
-        title='Sign in'
-        btnType='button'
-        containerStyles='text-primary-blue rounded-full bg-white min-w-[130px]'
-      />
-    </nav>
-  </header>
-);
+  return (
+    <>
+      {isSignedIn ? (
+        <>
+          <UserButton /> Profile
+        </>
+      ) : (
+<>
+  <CustomButton
+    title="s'inscrire"
+    btnType='button'
+    containerStyles='text-primary-blue font-semibold border-2 border-primary-blue rounded-full bg-white min-w-[140px] px-6 py-2 hover:bg-primary-blue hover:text-white transition-all duration-300 shadow-md'
+    href='/sign-up'
+  />
+  <CustomButton
+    title='se connecter'
+    btnType='button'
+    containerStyles='text-primary-blue font-semibold border-2 border-primary-blue rounded-full bg-white min-w-[140px] px-6 py-2 hover:bg-primary-blue hover:text-white transition-all duration-300 shadow-md'
+    href='/sign-in'
+  />
+</>
+      )}
+    </>
+  );
+};
 
 export default NavBar;

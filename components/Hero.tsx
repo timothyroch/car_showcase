@@ -5,6 +5,7 @@ import Image from 'next/image';
 import CustomButton from './CustomButton';
 import CarDetails from './CarDetails';
 import Quiz from './Quiz';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -39,15 +40,16 @@ const Hero = () => {
         />
 
         <CustomButton 
-        title="Find your car"
+        title="Prend un test pour trouver ton vehicule parfait"
         containerStyles="bg-primary-blue text-white rounded-full mt-10 p-10"
-        handleClick={() => setIsOpen(true)}
+        href='/dashboard'
         />
- <Quiz 
-      isOpen={isOpen}
-      closeModal={() => 
-        setIsOpen(false)}      
-      />
+                <CustomButton 
+        title="Vend ton véhicule"
+        containerStyles="bg-primary-blue text-white rounded-full mt-10 p-10"
+        href='/dashboard'
+        />
+
         
       </div>
         <div className='hero__image-container'>

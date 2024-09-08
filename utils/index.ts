@@ -1,4 +1,6 @@
-import { CarProps, FilterProps } from "@/types";
+import { Car } from '@/types';
+import { Cars } from '@/components/data/CarDatabase'; // Ensure the import path is correct
+import { FilterProps } from '@/types';
 
 export const calculateCarRent = (city_mpg: number, year: number) => {
   const basePricePerDay = 50; // Base rental price per day in dollars
@@ -18,35 +20,53 @@ export const calculateCarRent = (city_mpg: number, year: number) => {
 
 
 export async function fetchCars(filters: FilterProps) {
-const { manufacturer, year, model, limit, fuel } = filters;
+  const { marque, année, modèle, limit, motorisation } = filters;
 
-  const headers = {
-      'x-rapidapi-key': '86b2ab80c1msheec1b33946450f9p170a2cjsnf6df14fea82c',
-      'x-rapidapi-host': 'cars-by-api-ninjas.p.rapidapi.com'
-  }
-  
-  const response = await fetch(`https://cars-by-api-ninjas.p.rapidapi.com/v1/cars?make=${manufacturer}&year=${year}&model=${model}&limit=${limit}&fuel_type=${fuel}`, {
-    headers: headers,
+  // Filter cars based on the filters provided
+  const filteredCars = Cars.filter((car: Car) => {
+    let isValid = true;
+    
+    // Match against 'marque'
+    if (marque && !car.marque.toLowerCase().includes(marque.toLowerCase())) {
+      isValid = false;
+    }
+    
+    // Match against 'année'
+    if (année && car.année !== année) {
+      isValid = false;
+    }
+    
+    // Match against 'motorisation'
+    if (motorisation && !car.motorisation.toLowerCase().includes(motorisation.toLowerCase())) {
+      isValid = false;
+    }
+    
+    // Match against 'modèle'
+    if (modèle && !car.modèle.toLowerCase().includes(modèle.toLowerCase())) {
+      isValid = false;
+    }
+    
+    return isValid;
   });
 
-  const result = await response.json();
+  // Slice the filtered results based on the limit
+  const result = filteredCars.slice(0, limit || 10);
 
   return result;
-
 }
 
-export const generateCarImageUrl = (car: CarProps, angle?
+export const generateCarImageUrl = (car: Car, angle?
   : string) => {
     const url = new URL('https://cdn.imagin.studio/getimage');
 
-    const { make, year, model } = car;
+    const { marque, année, modèle } = car;
 
     url.searchParams.append('customer',
       'hrjavascript-mastery'); //api key of the tutor, might not work indefinitively
-      url.searchParams.append('make', make);
-      url.searchParams.append('modelFamily', model.split(" ")[0]);
+      url.searchParams.append('make', marque);
+      url.searchParams.append('modelFamily', modèle.split(" ")[0]);
       url.searchParams.append('zoomType', 'fullscreen');
-      url.searchParams.append('modelYear', `${year}`);
+      url.searchParams.append('modelYear', `${année}`);
       url.searchParams.append('angle', `${angle}`);
     
       return `${url}`;
@@ -54,10 +74,11 @@ export const generateCarImageUrl = (car: CarProps, angle?
 
   export const updateSearchParams = (type: string, value: string) => {
     const searchParams = new URLSearchParams(window.location.search);
-
+  
     searchParams.set(type, value);
-
-    const newPathname = `${window.location.pathname}?${searchParams.toString()}`
-
+  
+    const newPathname = `${window.location.pathname}?${searchParams.toString()}`;
+  
     return newPathname;
   }
+  
